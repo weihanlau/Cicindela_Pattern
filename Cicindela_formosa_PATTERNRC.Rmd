@@ -58,10 +58,6 @@ IDlist <- c('CNC1151335','CNC1151393', 'CNC1860122','CNC1860123','CNC1860300')
 
 ```{r}
 
-setwd("C:/Users/USER/Documents/My School Documents/UofA/Lightroom")
-
-source("patLanRGB.R")
-
 target <- landmarkListRGB[["CNC1151335"]]
 
 patlanRGB <- patLanRGB(samplejpg, 
