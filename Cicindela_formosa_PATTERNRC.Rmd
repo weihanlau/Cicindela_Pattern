@@ -1,0 +1,98 @@
+---
+title: "Cicindela_formosa_PATTERNRC"
+author: "Wei Han"
+date: "2023-08-31"
+output: html_document
+---
+
+```{r}
+
+library(devtools)
+
+```
+
+```{r}
+
+devtools::install_github("StevenVB12/patternize", force = TRUE)
+
+```
+
+```{r}
+
+library(tidyverse)
+library(patternize)
+library(dplyr)
+library(recolorize)
+library(raster)
+library(palmerpenguins)
+library(ggplot2)
+library(cowplot)
+
+```
+
+```{r}
+
+# make list of recolored images
+setwd("C:/Users/USER/Documents/My School Documents/UofA/Lightroom")
+recolpics <- tools::file_path_sans_ext(dir("recolored images/", ".jpg"))
+samplejpg <- makeList(recolpics, type = "image", prepath = "recolored images/", extension = ".jpg")
+
+```
+
+```{r}
+
+# make list of recolored images' landmarks (which are all the same since they are already aligned)
+setwd("C:/Users/USER/Documents/My School Documents/UofA/Lightroom")
+landmarkListRGB <- makeList(recolpics, type = "landmark", prepath = "RGB landmarks/", extension = "_RGBlandmarks.txt")
+
+```
+
+```{r}
+
+RGBmaculation <- c(187,158,120)
+RGBbrown <- c(87,63,58)
+IDlist <- c('CNC1151335','CNC1151393', 'CNC1860122','CNC1860123','CNC1860300')
+
+```
+
+
+```{r}
+
+setwd("C:/Users/USER/Documents/My School Documents/UofA/Lightroom")
+
+source("patLanRGB.R")
+
+target <- landmarkListRGB[["CNC1151335"]]
+
+patlanRGB <- patLanRGB(samplejpg, 
+                       landmarkListRGB,
+                       RGBmaculation, 
+                       colOffset = 0.05,
+                       transformRef = landmarkListRGB[["CNC1151335"]],
+                       resampleFactor = 1, 
+                       adjustCoords = T,
+                       plot = "compare") 
+```
+
+```{r}
+
+sumRGB <- sumRaster(patlanRGB, IDlist, type = 'RGB') 
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
