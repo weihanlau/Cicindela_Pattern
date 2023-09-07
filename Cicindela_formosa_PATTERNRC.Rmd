@@ -34,6 +34,7 @@ library(cowplot)
 
 # make list of recolored images
 setwd("C:/Users/USER/Documents/My School Documents/UofA/Lightroom")
+#id
 recolpics <- tools::file_path_sans_ext(dir("recolored images/", ".jpg"))
 samplejpg <- makeList(recolpics, type = "image", prepath = "recolored images/", extension = ".jpg")
 
@@ -48,10 +49,11 @@ landmarkListRGB <- makeList(recolpics, type = "landmark", prepath = "RGB landmar
 ```
 
 ```{r}
-
+setwd("C:/Users/USER/Documents/My School Documents/UofA/Lightroom")
 RGBmaculation <- c(187,158,120)
 RGBbrown <- c(87,63,58)
 IDlist <- c('CNC1151335','CNC1151393', 'CNC1860122','CNC1860123','CNC1860300')
+IDlistfixed <- tools::file_path_sans_ext(dir("recolored images/", ".jpg"))
 
 ```
 
@@ -65,6 +67,8 @@ patlanRGB <- patLanRGB(samplejpg,
                        RGBmaculation, 
                        colOffset = 0.05,
                        transformRef = landmarkListRGB[["CNC1151335"]],
+                       res = 300,
+                       cropOffset = c(200,200,200,200),
                        resampleFactor = 1, 
                        adjustCoords = T,
                        plot = "compare") 
@@ -72,13 +76,74 @@ patlanRGB <- patLanRGB(samplejpg,
 
 ```{r}
 
-sumRGB <- sumRaster(patlanRGB, IDlist, type = 'RGB') 
+# sum colour rasters 
+sumRGB <- sumRaster(patlanRGB, IDlist, type = 'RGB')
+sumRGBfixed <- sumRaster(patlanRGB, IDlistfixed, type = "RGB")
+```
 
+```{r}
+
+setwd("C:/Users/USER/Documents/My School Documents/UofA/Lightroom")
+colfunc = c("black","lightblue","blue","green", "yellow","red") 
+cartoon = read.table('RGB outline/CNC1151335 RGBoutline.txt', h = F)
+```
+
+
+```{r}
+
+# plot heat map
+plotHeat(sumRGBfixed, 
+         IDlistfixed, 
+         colpalette = colfunc,
+         plotCartoon = TRUE,
+         refShape = 'target', 
+         outline = cartoon, 
+         landList = landmarkListRGB, 
+         adjustCoords = FALSE, 
+         imageList = samplejpg, 
+         #flipRaster = "y", 
+         cartoonID = "CNC1151335",
+         cartoonFill = 'black', 
+         cartoonOrder = 'under') 
+
+```
+
+```{r}
+
+pop1 <- c("CNC1151335")
+pop2 <- c("CNC1860123", "CNC1860122")
+pop3 <- c("CNC1860300", "CNC1151393")
+
+popList <- list(pop1, pop2, pop3)
+colList <- c(rep("blue", length(pop1)), rep("red", length(pop2)), rep("green", length(pop2)))
+symbolList <- c(rep(18, length(pop1)), rep(18, length(pop2)), rep(18, length(pop3)))
 ```
 
 
 
+```{r}
 
+# plot PCA
+
+patPCA(patlanRGB, 
+       popList,
+       colList,
+       symbolList = symbolList, 
+       plot = TRUE,
+       plotType = "points",
+       plotChanges = TRUE,
+       plotCartoon = TRUE,
+       refShape = "target",
+       refImage = samplejpg[["CNC1151335"]], 
+       outline = cartoon,
+       imageList = samplejpg,
+       normalized = TRUE,
+       cartoonID = "CNC1151335",
+       cartoonFill = "black", 
+       cartoonOrder = "under", 
+       legendTitle = "Differences")
+
+```
 
 
 
